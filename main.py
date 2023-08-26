@@ -1,23 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, session,flash
-from flask_mysqldb import MySQL
-import MySQLdb.cursors
 import re
-
+import sqlite3
 
 app = Flask(__name__)
 
 # Change this to your secret key (can be anything, it's for extra protection)
 app.secret_key = '1a2b3c4d5e6d7g8h9i10'
 
-# Enter your database connection details below
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '*****' #Replace ******* with  your database password.
-app.config['MYSQL_DB'] = 'loginapp'
 
-
-# Intialize MySQL
-mysql = MySQL(app)
+# Intialize Sqlite3
+connection = sqlite3.connect('database.db')
+cursor = connection.cursor()
 
 
 # http://localhost:5000/pythonlogin/ - this will be the login page, we need to use both GET and POST requests
@@ -29,8 +22,7 @@ def login():
         # Create variables for easy access
         username = request.form['username']
         password = request.form['password']
-        # Check if account exists using MySQL
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        # Check if account exists using Sqlite
         cursor.execute('SELECT * FROM accounts WHERE username = %s AND password = %s', (username, password))
         # Fetch one record and return result
         account = cursor.fetchone()
@@ -58,8 +50,7 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-                # Check if account exists using MySQL
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+                # Check if account exists using Sqlite
         # cursor.execute('SELECT * FROM accounts WHERE username = %s', (username))
         cursor.execute( "SELECT * FROM accounts WHERE username LIKE %s", [username] )
         account = cursor.fetchone()
@@ -75,7 +66,7 @@ def register():
         else:
         # Account doesnt exists and the form data is valid, now insert new account into accounts table
             cursor.execute('INSERT INTO accounts VALUES (NULL, %s, %s, %s)', (username,email, password))
-            mysql.connection.commit()
+            connection.commit()
             flash("You have successfully registered!", "success")
             return redirect(url_for('login'))
 
