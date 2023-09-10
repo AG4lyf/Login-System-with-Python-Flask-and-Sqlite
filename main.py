@@ -9,12 +9,15 @@ app.secret_key = '1a2b3c4d5e6d7g8h9i10'
 
 
 # Intialize Sqlite3
-connection = sqlite3.connect('database.db')
+connection = sqlite3.connect('database.db', check_same_thread=False)
 cursor = connection.cursor()
 
+# create a user table 
+cursor.execute('CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT)')
+connection.commit()
 
-# http://localhost:5000/pythonlogin/ - this will be the login page, we need to use both GET and POST requests
-@app.route('/pythonlogin/', methods=['GET', 'POST'])
+# http://localhost:5000/login - this will be the login page, we need to use both GET and POST requests
+@app.route('/login', methods=['GET', 'POST'])
 def login():
 # Output message if something goes wrong...
     # Check if "username" and "password" POST requests exist (user submitted form)
@@ -40,9 +43,9 @@ def login():
     return render_template('auth/login.html',title="Login")
 
 
-# http://localhost:5000/pythonlogin/register 
+# http://localhost:5000/register 
 # This will be the registration page, we need to use both GET and POST requests
-@app.route('/pythonlogin/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     # Check if "username", "password" and "email" POST requests exist (user submitted form)
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:

@@ -11,7 +11,7 @@ class FlaskAppTestCase(unittest.TestCase):
     def test_login(self):
         with self.app as client:
             # Perform a POST request to the login endpoint with valid credentials
-            response = client.post('/pythonlogin/', data=dict(username='testuser', password='testpassword'))
+            response = client.post('/login', data=dict(username='testuser', password='testpassword'))
             self.assertEqual(response.status_code, 302)  # expect a redirect response
 
             # Ensure session variables are set correctly
@@ -22,7 +22,7 @@ class FlaskAppTestCase(unittest.TestCase):
     def test_register(self):
         with self.app as client:
             # Perform a POST request to the registration endpoint with valid form data
-            response = client.post('/pythonlogin/register', data=dict(username='newuser', password='newpassword', email='test@example.com'))
+            response = client.post('/register', data=dict(username='newuser', password='newpassword', email='test@example.com'))
             self.assertEqual(response.status_code, 302)  # expect a redirect response
 
             # Ensure account was successfully registered
@@ -35,7 +35,7 @@ class FlaskAppTestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 302)  # expect a redirect response
 
             # Log in the user
-            client.post('/pythonlogin/', data=dict(username='testuser', password='testpassword'))
+            client.post('/login', data=dict(username='testuser', password='testpassword'))
 
             # Perform a GET request to the home endpoint after logging in
             response = client.get('/')
@@ -49,7 +49,7 @@ class FlaskAppTestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 302)  # expect a redirect response
 
             # Log in the user
-            client.post('/pythonlogin/', data=dict(username='testuser', password='testpassword'))
+            client.post('/login', data=dict(username='testuser', password='testpassword'))
 
             # Perform a GET request to the profile endpoint after logging in
             response = client.get('/profile')
