@@ -26,7 +26,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         # Check if account exists using Sqlite
-        cursor.execute('SELECT * FROM accounts WHERE username = %s AND password = %s', (username, password))
+        cursor.execute('SELECT * FROM accounts WHERE username = ? AND password = ?', (username, password, ))
         # Fetch one record and return result
         account = cursor.fetchone()
                 # If account exists in accounts table in out database
@@ -54,8 +54,8 @@ def register():
         password = request.form['password']
         email = request.form['email']
                 # Check if account exists using Sqlite
-        # cursor.execute('SELECT * FROM accounts WHERE username = %s', (username))
-        cursor.execute( "SELECT * FROM accounts WHERE username LIKE %s", [username] )
+        # cursor.execute('SELECT * FROM accounts WHERE username = ?', (username))
+        cursor.execute( "SELECT * FROM accounts WHERE username LIKE ?", (username, ) )
         account = cursor.fetchone()
         # If account exists show error and validation checks
         if account:
@@ -68,7 +68,7 @@ def register():
             flash("Incorrect username/password!", "danger")
         else:
         # Account doesnt exists and the form data is valid, now insert new account into accounts table
-            cursor.execute('INSERT INTO accounts VALUES (NULL, %s, %s, %s)', (username,email, password))
+            cursor.execute('INSERT INTO accounts VALUES (NULL, ?, ?, ?)', (username,email, password, ))
             connection.commit()
             flash("You have successfully registered!", "success")
             return redirect(url_for('login'))
